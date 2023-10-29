@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as diagrams from "../diagrams";
+import type * as entities from "../entities";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,6 +27,7 @@ import type * as diagrams from "../diagrams";
  */
 declare const fullApi: ApiFromModules<{
   diagrams: typeof diagrams;
+  entities: typeof entities;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

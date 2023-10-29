@@ -35,7 +35,7 @@ export default function RootLayout({
           >
             <Toaster />
             <Navbar />
-            <main className="h-full pt-40">{children}</main>
+            <main className="h-full">{children}</main>
           </ThemeProvider>
         </ConvexClientProvider>
       </body>

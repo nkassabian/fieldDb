@@ -9,4 +9,11 @@ export default defineSchema({
     isArchived: v.boolean(),
     isPublished: v.boolean(),
   }).index("by_user", ["userId"]),
+  entities: defineTable({
+    title: v.string(),
+    description: v.optional(v.string()),
+    diagramId: v.id("diagrams"),
+    xPos: v.number(),
+    yPos: v.number(),
+  }).index("by_diagramId", ["diagramId"]),
 });

@@ -55,16 +55,21 @@ const Page = () => {
           </div>
         </>
       )}
-      {diagrams &&
-        diagrams.map((diagram) => (
-          <Diagram
-            key={diagram._id}
-            title={diagram.title}
-            id={diagram._id}
-            description={diagram.description}
-            createdOn={new Date(diagram._creationTime)}
-          />
-        ))}
+      <div
+        className="p-10 w-full rounded-xl flex 
+      flex-row justify-start items-center flex-wrap gap-4"
+      >
+        {diagrams &&
+          diagrams.map((diagram) => (
+            <Diagram
+              key={diagram._id}
+              title={diagram.title}
+              id={diagram._id}
+              description={diagram.description}
+              createdOn={new Date(diagram._creationTime)}
+            />
+          ))}
+      </div>
     </div>
   );
 };

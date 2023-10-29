@@ -18,21 +18,44 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useState } from "react";
+import { XYPosition } from "reactflow";
+import { useParams, useRouter } from "next/navigation";
+import { Id } from "@/convex/_generated/dataModel";
 
-const CreateDiagramModal = () => {
-  const { isOpen, onClose } = useCreation();
-  const create = useMutation(api.diagrams.create);
+const CreateNodeModal = ({
+  onClose,
+  isOpen,
+  diagramId,
+}: {
+  onClose: () => void;
+  isOpen: boolean;
+  diagramId: Id<"diagrams">;
+}) => {
+  var params = useParams();
+  const create = useMutation(api.entities.add);
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string | undefined>(undefined);
 
   const onCreate = () => {
-    const promise = create({ title: title, description });
+    const reactFlowContainer = document.querySelector(".react-flow");
+    const reactFlowBounds = reactFlowContainer?.getBoundingClientRect();
+
+    let center: { x: number; y: number } = { x: 0, y: 0 };
+
+    if (reactFlowBounds) {
+      center = {
+        x: (reactFlowBounds.width / 2) * 0.9,
+        y: (reactFlowBounds.height / 2) * 0.8,
+      };
+    }
+
+    const promise = create({ title: title, diagramId, position: center });
 
     toast.promise(promise, {
-      loading: "Creating a new diagram...",
-      success: "Created a new diagram!",
-      error: "Failed to create a new diagram...",
+      loading: "Creating a new node...",
+      success: "Created a new node!",
+      error: "Failed to create a new node...",
     });
     onClose();
     setTitle("");
@@ -43,7 +66,7 @@ const CreateDiagramModal = () => {
     <Dialog onOpenChange={onClose} open={isOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create Diagram</DialogTitle>
+          <DialogTitle>Create Node</DialogTitle>
         </DialogHeader>
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="link">Title</Label>
@@ -78,4 +101,4 @@ const CreateDiagramModal = () => {
   );
 };
 
-export default CreateDiagramModal;
+export default CreateNodeModal;
