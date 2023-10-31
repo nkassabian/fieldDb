@@ -6,8 +6,8 @@ import { Handle, Position } from "reactflow";
 const ERDTableNode = ({ data }: any) => {
   return (
     <>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-foreground-muted">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg overflow-hidden">
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-foreground-muted overflow-hidden">
           <thead
             className="text-md text-center text-white text-md p-5"
             style={{ backgroundColor: "rgb(0,0,0)" }}

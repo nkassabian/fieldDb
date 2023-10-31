@@ -1,17 +1,16 @@
 "use client";
 import ERDTableNode from "@/components/customNodes/ERDTableNode";
 import CreateNodeModal from "@/components/modals/CreateNodeModal";
-import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { DatabaseZap, Grab, Import, LucideTable2 } from "lucide-react";
-import React, { useState } from "react";
-import ReactFlow, { Background, Controls, MiniMap, Panel } from "reactflow";
+import ReactFlow, { Background, Controls, MiniMap } from "reactflow";
 
 import "reactflow/dist/style.css";
-
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+import Sidebar from "./_components/Sidebar";
+import { RFStore } from "@/hooks/NodeStore";
+import FlowEditor from "./_components/FlowEditor";
+import { useEffect } from "react";
 
 interface DocumentIdPageProps {
   params: {
@@ -19,19 +18,17 @@ interface DocumentIdPageProps {
   };
 }
 
-//TODO: hange from any
+//TODO: Change from any
 const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
+  const { setNodes } = RFStore();
+
   const diagram: any = useQuery(api.diagrams.getById, {
     diagramId: params.diagramId,
   });
 
-  const [nodeCreateModal, setNodeCreateModal] = useState(false);
-
   console.log("diagram:", diagram);
 
-  const nodeTypes = { ERDTableNode: ERDTableNode };
-
-  const initialNodes = diagram?.entities?.map((entity: Doc<"entities">) => {
+  var items = diagram?.entities?.map((entity: Doc<"entities">) => {
     return {
       id: entity._id,
       type: "ERDTableNode",
@@ -40,47 +37,20 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
     };
   });
 
+  useEffect(() => {
+    if (items != undefined) {
+      console.log("test test");
+      setNodes(items);
+    }
+  }, [diagram]);
+
   return (
     <>
       {diagram && (
         <div className="flex flex-row border-t border-nuetral-200 h-[calc(100% - 88px)] ">
-          <CreateNodeModal
-            isOpen={nodeCreateModal}
-            onClose={() => setNodeCreateModal(!nodeCreateModal)}
-            diagramId={diagram._id}
-          />
-          <div className="w-12 flex flex-col align-center  gap-y-2 border-r border-nuetral-200">
-            <Button variant={"ghost"} className="p-3">
-              <Grab className="w-10 h-10 text-muted-foreground" />
-            </Button>
-            <Button
-              onClick={() => {
-                setNodeCreateModal(true);
-              }}
-              variant={"ghost"}
-              className="p-3"
-            >
-              <LucideTable2 className="w-10 h-10 text-muted-foreground" />
-            </Button>
-            <Button variant={"ghost"} className="p-3">
-              <DatabaseZap className="w-10 h-10 text-muted-foreground" />
-            </Button>
-            <Button variant={"ghost"} className="p-3">
-              <Import className="w-10 h-10 text-muted-foreground" />
-            </Button>
-          </div>
-          <div style={{ width: "100vw", height: "calc(100vh - 88px)" }}>
-            <ReactFlow
-              nodes={initialNodes}
-              edges={initialEdges}
-              nodeTypes={nodeTypes}
-            >
-              <Controls />
-              <MiniMap />
-              <Background gap={12} size={1} />
-            </ReactFlow>
-          </div>
-
+          <CreateNodeModal diagramId={diagram._id} />
+          <Sidebar />
+          <FlowEditor />
           <div className="w-[400px] shadow-lg"></div>
         </div>
       )}

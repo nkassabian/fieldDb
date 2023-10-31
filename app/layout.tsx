@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/providers/convex.provider";
 import { Navbar } from "@/components/Nabar";
 import { Toaster } from "sonner";
+import { usePathname, useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = usePathname();
   return (
     <html lang="en">
       <body className={cn(inter.className, "dark:bg-[#1f1f1f]")}>
@@ -34,7 +36,7 @@ export default function RootLayout({
             storageKey="pistachio-theme"
           >
             <Toaster />
-            <Navbar />
+            {!router.includes("diagrams") && <Navbar />}
             <main className="h-full">{children}</main>
           </ThemeProvider>
         </ConvexClientProvider>

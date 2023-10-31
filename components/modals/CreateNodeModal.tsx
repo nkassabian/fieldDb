@@ -21,17 +21,10 @@ import { useState } from "react";
 import { XYPosition } from "reactflow";
 import { useParams, useRouter } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
+import { usenodeCreation } from "@/hooks/table-creation-hook";
 
-const CreateNodeModal = ({
-  onClose,
-  isOpen,
-  diagramId,
-}: {
-  onClose: () => void;
-  isOpen: boolean;
-  diagramId: Id<"diagrams">;
-}) => {
-  var params = useParams();
+const CreateNodeModal = ({ diagramId }: { diagramId: Id<"diagrams"> }) => {
+  const { onClose, isOpen, onOpen } = usenodeCreation();
   const create = useMutation(api.entities.add);
 
   const [title, setTitle] = useState<string>("");
