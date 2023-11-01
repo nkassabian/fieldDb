@@ -11,6 +11,8 @@ import Sidebar from "./_components/Sidebar";
 import { RFStore } from "@/hooks/NodeStore";
 import FlowEditor from "./_components/FlowEditor";
 import { useEffect } from "react";
+import NodeSettings from "./_components/NodeSettings";
+import DeleteTableModal from "@/components/modals/DeleteTableModal";
 
 interface DocumentIdPageProps {
   params: {
@@ -26,7 +28,7 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
     diagramId: params.diagramId,
   });
 
-  console.log("diagram:", diagram);
+  const { selectedNode } = RFStore();
 
   var items = diagram?.entities?.map((entity: Doc<"entities">) => {
     return {
@@ -39,7 +41,6 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
 
   useEffect(() => {
     if (items != undefined) {
-      console.log("test test");
       setNodes(items);
     }
   }, [diagram]);
@@ -49,9 +50,10 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
       {diagram && (
         <div className="flex flex-row border-t border-nuetral-200 h-[calc(100% - 88px)] ">
           <CreateNodeModal diagramId={diagram._id} />
+          <DeleteTableModal entityId={selectedNode?.id as Id<"entities">} />
           <Sidebar />
           <FlowEditor />
-          <div className="w-[400px] shadow-lg"></div>
+          <NodeSettings />
         </div>
       )}
     </>

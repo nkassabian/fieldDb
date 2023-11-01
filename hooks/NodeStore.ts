@@ -15,7 +15,10 @@ import { create } from "zustand";
 type RFState = {
   nodes: Node[];
   edges?: Edge[];
+  selectedNode: Node | undefined;
+  setSelectedNode: (node: Node | undefined) => void;
   setNodes: (nodes: Node[]) => void;
+
   // setEdges: (nodes: Node[]) => void;
   onNodesChange: OnNodesChange;
 };
@@ -24,6 +27,12 @@ type RFState = {
 export const RFStore = create<RFState>((set, get) => ({
   nodes: [],
   edges: [],
+  selectedNode: undefined,
+  setSelectedNode: (node: Node | undefined) => {
+    set({
+      selectedNode: node,
+    });
+  },
   setNodes: (nodes: Node[]) => {
     set({
       nodes: nodes,
