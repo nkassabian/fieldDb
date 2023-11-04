@@ -1,6 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { Position, XYPosition } from "reactflow";
+import { mutation } from "./_generated/server";
 
 export const add = mutation({
   args: {
@@ -62,6 +61,30 @@ export const remove = mutation({
     }
 
     const document = await ctx.db.delete(args.id);
+
+    return document;
+  },
+});
+
+export const updatePosition = mutation({
+  args: { id: v.id("entities"), xPos: v.number(), yPos: v.number() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+    const userId = identity.subject;
+    const existingDoc = await ctx.db.get(args.id);
+
+    if (!existingDoc) {
+      throw new Error("Not found");
+    }
+
+    const document = await ctx.db.patch(args.id, {
+      xPos: args.xPos,
+      yPos: args.yPos,
+    });
 
     return document;
   },

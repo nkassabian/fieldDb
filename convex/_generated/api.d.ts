@@ -14,8 +14,10 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as databaseTypes from "../databaseTypes";
 import type * as diagrams from "../diagrams";
 import type * as entities from "../entities";
+import type * as rowTypes from "../rowTypes";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,8 +28,10 @@ import type * as entities from "../entities";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  databaseTypes: typeof databaseTypes;
   diagrams: typeof diagrams;
   entities: typeof entities;
+  rowTypes: typeof rowTypes;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

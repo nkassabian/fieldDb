@@ -14,10 +14,20 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { useCreation } from "@/hooks/diagram-creation-hook";
-import { useMutation } from "convex/react";
+import { ConvexReactClient, useConvex, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 
 const CreateDiagramModal = () => {
   const { isOpen, onClose } = useCreation();
@@ -25,6 +35,26 @@ const CreateDiagramModal = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>(undefined);
+  const [dbTpye, setDbTpye] = useState<Id<"databaseTypes"> | undefined>(
+    undefined
+  );
+
+  const client = useConvex();
+
+  const [databaseTypes, setDatabaseTypes] = useState<
+    Doc<"databaseTypes">[] | null
+  >(null);
+  useEffect(() => {
+    // Fetch data from the database and update databaseTypes
+    fetchDataFromDatabase(client)
+      .then((data) => {
+        setDatabaseTypes(data);
+      })
+      .catch((error) => {
+        // Handle error, e.g., show an error message
+        console.error("Error fetching data:", error);
+      });
+  }, [client]);
 
   const onCreate = () => {
     const promise = create({ title: title, description });
@@ -62,6 +92,20 @@ const CreateDiagramModal = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          <Label>Select Datbase:</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Select a database" />
+            </SelectTrigger>
+            <SelectContent onChange={() => console.log("changed")}>
+              {databaseTypes &&
+                databaseTypes.map((type) => (
+                  <SelectItem key={type._id} value={type._id}>
+                    {type.title}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
@@ -79,3 +123,7 @@ const CreateDiagramModal = () => {
 };
 
 export default CreateDiagramModal;
+
+async function fetchDataFromDatabase(client: ConvexReactClient) {
+  return await client.query(api.databaseTypes.getDatabaseTypes);
+}

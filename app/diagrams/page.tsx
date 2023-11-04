@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { formatDateToCustomFormat } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
-import { useMutation, useQuery } from "convex/react";
+import { useConvex, useMutation, useQuery } from "convex/react";
 import Image from "next/image";
 import { toast } from "sonner";
 import Diagram from "./_components/Diagram";
@@ -14,6 +14,8 @@ import CreateDiagramModal from "@/components/modals/CreateDiagramModal";
 
 const Page = () => {
   const diagrams = useQuery(api.diagrams.getDiagrams);
+
+  var convex = useConvex();
 
   return (
     <div className=" px-[10em]">

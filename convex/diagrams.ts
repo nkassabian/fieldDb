@@ -46,6 +46,7 @@ export const create = mutation({
       userId,
       isArchived: false,
       isPublished: false,
+      databaseTypeId: "4558fq0z3dfdm98zneg6tyf99k8vp0g" as Id<"databaseTypes">,
     });
 
     return document;

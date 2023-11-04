@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { RFStore } from "@/hooks/NodeStore";
 import { useNodeDeleteion } from "@/hooks/node-deletion-hook";
 import { cn } from "@/lib/utils";
@@ -24,7 +24,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { useMutation } from "convex/react";
+import {
+  ConvexReactClient,
+  useConvex,
+  useMutation,
+  useQuery,
+} from "convex/react";
 import { KeyRound, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -58,7 +63,7 @@ const dataTypes = [
   "money", // Default: 0.00
 ];
 
-const NodeSettings = () => {
+const NodeSettings = ({ diagramId }: { diagramId: Id<"diagrams"> }) => {
   const { selectedNode } = RFStore();
   const [title, setTitle] = useState<string | undefined>(
     selectedNode?.data.label
@@ -82,13 +87,15 @@ const NodeSettings = () => {
 
   const { onOpen } = useNodeDeleteion();
 
-  const dataTypesList = useMemo(() => {
-    return dataTypes.map((value) => (
-      <SelectItem key={value} value={value}>
-        {value}
-      </SelectItem>
-    ));
-  }, []);
+  // const dataTypesList = useMemo(() => {
+  //   if (rowTypes != undefined) {
+  //     return rowTypes.map((value) => (
+  //       <SelectItem key={value._id} value={value.title}>
+  //         {value.title}
+  //       </SelectItem>
+  //     ));
+  //   }
+  // }, []);
 
   return (
     <>
@@ -122,52 +129,51 @@ const NodeSettings = () => {
         </div>
         <div className="flex flex-row gap-x-2 items-center justify-center">
           {/* TODO:Uncomment when rows are added */}
-          {/* {selectedNode != undefined &&
-            selectedNode.data.columns.map((column: any) => (
-              <>
-                <div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant={"ghost"} className="px-1">
-                        <MoreVertical className="h-4 w-4" />
+          {selectedNode != undefined && (
+            <>
+              <div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Button variant={"ghost"} className="px-1">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="p-0 m-0">
+                      <Button variant={"destructive"} className="w-full">
+                        <Trash2 className="h-4 w-4" /> Trash
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem className="p-0 m-0">
-                        <Button variant={"destructive"} className="w-full">
-                          <Trash2 className="h-4 w-4" /> Trash
-                        </Button>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <div>
-                  <Input
-                    placeholder="row name"
-                    id="tablename"
-                    className="h-8 focus-visible:ring-transparent"
-                  />
-                </div>
-                <div>
-                  <Select>
-                    <SelectTrigger className="h-8">
-                      <SelectValue placeholder="datatype" />
-                    </SelectTrigger>
-                    <SelectContent className="h-52 rounded-sm">
-                      <SelectGroup>{dataTypesList}</SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Toggle>N</Toggle>
-                </div>
-                <div>
-                  <Toggle>
-                    <KeyRound className="h-4 w-4" />
-                  </Toggle>
-                </div>
-              </>
-            ))} */}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div>
+                <Input
+                  placeholder="row name"
+                  id="tablename"
+                  className="h-8 focus-visible:ring-transparent w-32"
+                />
+              </div>
+              <div>
+                <Select>
+                  <SelectTrigger className="h-8 w-34">
+                    <SelectValue placeholder="datatype" />
+                  </SelectTrigger>
+                  <SelectContent className="h-52 rounded-sm w-34">
+                    {/* <SelectGroup>{dataTypesList}</SelectGroup> */}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Toggle>N</Toggle>
+              </div>
+              <div>
+                <Toggle>
+                  <KeyRound className="h-4 w-4" />
+                </Toggle>
+              </div>
+            </>
+          )}
         </div>
         <div className="relative flex py-5 items-center">
           <div className="flex-grow border-t border-foreground-muted"></div>

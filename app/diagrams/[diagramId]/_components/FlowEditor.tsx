@@ -1,5 +1,8 @@
 import ERDTableNode from "@/components/customNodes/ERDTableNode";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { RFStore } from "@/hooks/NodeStore";
+import { useMutation } from "convex/react";
 import { useMemo } from "react";
 import ReactFlow, { Background, Controls, MiniMap, Node } from "reactflow";
 
@@ -10,6 +13,24 @@ const FlowEditor = () => {
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
+  };
+
+  const updatePosition = useMutation(api.entities.updatePosition);
+
+  const updateNodePosition = (id: string, x: number, y: number) => {
+    updatePosition({
+      id: id as Id<"entities">,
+      xPos: x,
+      yPos: y,
+    });
+  };
+
+  const onNodeDragStop = (
+    event: React.MouseEvent,
+    node: Node,
+    nodes: Node[]
+  ) => {
+    updateNodePosition(node.id, node.position.x, node.position.y);
   };
 
   const onPaneClick = (event: React.MouseEvent) => {
@@ -25,6 +46,7 @@ const FlowEditor = () => {
         onNodesChange={onNodesChange}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
+        onNodeDragStop={onNodeDragStop}
       >
         <Controls />
         <MiniMap />
