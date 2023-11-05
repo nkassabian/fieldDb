@@ -22,7 +22,7 @@ interface DocumentIdPageProps {
 
 //TODO: Change from any
 const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
-  const { setNodes } = RFStore();
+  const { setNodes, setRowTypes } = RFStore();
 
   const diagram: any = useQuery(api.diagrams.getById, {
     diagramId: params.diagramId,
@@ -35,9 +35,17 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
       id: entity._id,
       type: "ERDTableNode",
       position: { x: entity.xPos, y: entity.yPos },
-      data: { label: entity.title },
+      data: { label: entity.title, ...entity },
     };
   });
+
+  var rowTypes = diagram?.rowTypes;
+
+  useEffect(() => {
+    if (diagram != undefined) {
+      setRowTypes(rowTypes);
+    }
+  }, [diagram]);
 
   useEffect(() => {
     if (items != undefined) {

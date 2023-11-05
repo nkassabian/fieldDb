@@ -22,10 +22,16 @@ export default defineSchema({
   }),
   rowTypes: defineTable({
     title: v.string(),
-    databaseId: v.id("databaseTypes"),
-  }).index("by_databaseTypesId", ["databaseId"]),
+    databaseTypeId: v.id("databaseTypes"),
+  }).index("by_databaseTypeId", ["databaseTypeId"]),
   rows: defineTable({
     title: v.string(),
     rowTypeId: v.id("rowTypes"),
-  }).index("by_rowTypeId", ["rowTypeId"]),
+    entityId: v.id("entities"),
+    nullable: v.boolean(),
+    primaryKey: v.boolean(),
+    priority: v.number(),
+  })
+    .index("by_rowTypeId", ["rowTypeId"])
+    .index("by_entityId", ["entityId"]),
 });

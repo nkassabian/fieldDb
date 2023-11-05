@@ -1,4 +1,5 @@
 // store.ts
+import { Doc } from "@/convex/_generated/dataModel";
 import {
   Edge,
   Node,
@@ -15,10 +16,11 @@ import { create } from "zustand";
 type RFState = {
   nodes: Node[];
   edges?: Edge[];
+  rowTypes?: Doc<"databaseTypes">[];
   selectedNode: Node | undefined;
   setSelectedNode: (node: Node | undefined) => void;
   setNodes: (nodes: Node[]) => void;
-
+  setRowTypes: (rowTypes: Doc<"databaseTypes">[]) => void;
   // setEdges: (nodes: Node[]) => void;
   onNodesChange: OnNodesChange;
 };
@@ -41,6 +43,11 @@ export const RFStore = create<RFState>((set, get) => ({
   onNodesChange: (changes: NodeChange[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),
+    });
+  },
+  setRowTypes: (rowTypes: Doc<"databaseTypes">[]) => {
+    set({
+      rowTypes: rowTypes,
     });
   },
 }));

@@ -76,17 +76,36 @@ export const getById = query({
       throw new Error("Unauthorized");
     }
 
-    var relationships = await getManyFrom(
+    var entities = await getManyFrom(
       ctx.db,
       "entities",
       "diagramId",
       document._id
     );
-    const transformedRelationships = relationships.map(
-      (relationship: Doc<"entities">) => ({ ...relationship })
+
+    var rowTypes = await getManyFrom(
+      ctx.db,
+      "rowTypes",
+      "databaseTypeId",
+      document.databaseTypeId
     );
 
-    const result = { ...document, entities: transformedRelationships };
+    const transformedRelationships = await Promise.all(
+      entities.map(async (entity: Doc<"entities">) => {
+        var rows = await getManyFrom(ctx.db, "rows", "entityId", entity._id);
+        return { ...entity, rows: rows };
+      })
+    );
+
+    const transformedRelationships2 = rowTypes.map(
+      (rowType: Doc<"rowTypes">) => ({ ...rowType })
+    );
+
+    const result = {
+      ...document,
+      entities: transformedRelationships,
+      rowTypes: transformedRelationships2,
+    };
 
     return result;
   },
