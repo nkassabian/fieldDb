@@ -32,15 +32,41 @@ import {
 } from "convex/react";
 import { KeyRound, MoreVertical, Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import NodeSettingRow from "./NodeSettingsRow";
+import { toast } from "sonner";
 
-const NodeSettings = ({ diagramId }: { diagramId: Id<"diagrams"> }) => {
+const NodeSettings = ({
+  diagramId,
+  diagram,
+}: {
+  diagramId: Id<"diagrams">;
+  diagram: any;
+}) => {
   const { selectedNode } = RFStore();
+
   const [title, setTitle] = useState<string | undefined>(
     selectedNode?.data.label
   );
 
-  const { rowTypes } = RFStore();
+  const desiredEntity = diagram.entities.find(
+    (entity: any) => entity._id === selectedNode?.id
+  );
+
   const updateTitle = useMutation(api.entities.updateTitle);
+  const addRow = useMutation(api.rows.create);
+
+  const onRowCreate = () => {
+    const promise = addRow({
+      enittyId: selectedNode?.id,
+      diagramId: diagramId,
+    });
+
+    toast.promise(promise, {
+      loading: "Addeding a new row...",
+      success: "Added a new row!",
+      error: "Failed to add a new row...",
+    });
+  };
 
   const onTitleChange = (content: string) => {
     setTitle(content);
@@ -56,18 +82,6 @@ const NodeSettings = ({ diagramId }: { diagramId: Id<"diagrams"> }) => {
   }, [selectedNode]);
 
   const { onOpen } = useNodeDeleteion();
-
-  const dataTypesList = useMemo(() => {
-    if (rowTypes != undefined) {
-      return rowTypes.map((value) => (
-        <SelectItem key={value._id} value={value._id}>
-          {value.title}
-        </SelectItem>
-      ));
-    } else {
-      return <div></div>;
-    }
-  }, [rowTypes]);
 
   return (
     <>
@@ -99,53 +113,12 @@ const NodeSettings = ({ diagramId }: { diagramId: Id<"diagrams"> }) => {
           </span>
           <div className="flex-grow border-t border-foreground-muted"></div>
         </div>
-        <div className="flex flex-row gap-x-2 items-center justify-center">
+        <div className="flex flex-col gap-x-2 items-center justify-center">
           {/* TODO:Uncomment when rows are added */}
           {selectedNode != undefined &&
-            selectedNode.data.rows.map((row: Doc<"rows">) => (
+            desiredEntity?.rows.map((row: Doc<"rows">) => (
               <>
-                <div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant={"ghost"} className="px-1">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem className="p-0 m-0">
-                        <Button variant={"destructive"} className="w-full">
-                          <Trash2 className="h-4 w-4" /> Trash
-                        </Button>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <div>
-                  <Input
-                    placeholder="row name"
-                    id="tablename"
-                    value={row.title}
-                    className="h-8 focus-visible:ring-transparent w-32"
-                  />
-                </div>
-                <div>
-                  <Select value={row.rowTypeId}>
-                    <SelectTrigger className="h-8 w-34">
-                      <SelectValue placeholder="datatype" />
-                    </SelectTrigger>
-                    <SelectContent className="h-52 rounded-sm w-34">
-                      <SelectGroup>{dataTypesList}</SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Toggle>N</Toggle>
-                </div>
-                <div>
-                  <Toggle>
-                    <KeyRound className="h-4 w-4" />
-                  </Toggle>
-                </div>
+                <NodeSettingRow row={row} />
               </>
             ))}
         </div>
@@ -157,7 +130,10 @@ const NodeSettings = ({ diagramId }: { diagramId: Id<"diagrams"> }) => {
               className="text-foreground-muted"
               size={"sm"}
             >
-              <Plus className="w-4 h-4 text-foreground-muted" />
+              <Plus
+                onClick={onRowCreate}
+                className="w-4 h-4 text-foreground-muted"
+              />
             </Button>
           </span>
           <div className="flex-grow border-t border-foreground-muted"></div>

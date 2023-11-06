@@ -1,7 +1,8 @@
-import { v } from "convex/values";
+import { GenericId, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { useConvex } from "convex/react";
+import { GenericDatabaseReader } from "convex/server";
 
 interface DiagramWithData extends Doc<"diagrams"> {
   entities: Doc<"entities">[] | undefined;

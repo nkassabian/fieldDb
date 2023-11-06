@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 export const add = mutation({
   args: {
@@ -89,3 +90,46 @@ export const updatePosition = mutation({
     return document;
   },
 });
+
+export const getRowsById = query({
+  args: {
+    entityId: v.optional(v.id("entities")),
+  },
+  handler: async (ctx, args) => {
+    if (args.entityId == undefined) {
+      throw new Error("missing field");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+
+    const document = await ctx.db.get(args.entityId);
+
+    if (!document) {
+      throw new Error("Not found");
+    }
+
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    var rows = await getManyFrom(ctx.db, "entities", "diagramId", document._id);
+
+    const rowsRelationsghip = rows.map((rowType: Doc<"rows">) => ({
+      ...rows,
+    }));
+
+    const result = {
+      ...document,
+      rows: rowsRelationsghip,
+    };
+
+    return result;
+  },
+});
+
+async function getManyFrom(db: any, table: string, field: string, value: any) {
+  return db
+    .query(table)
+    .withIndex("by_" + field, (q: any) => q.eq(field, value))
+    .collect();
+}

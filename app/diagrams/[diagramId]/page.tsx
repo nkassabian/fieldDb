@@ -61,7 +61,7 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
           <DeleteTableModal entityId={selectedNode?.id as Id<"entities">} />
           <Sidebar />
           <FlowEditor />
-          <NodeSettings diagramId={diagram._id} />
+          <NodeSettings diagramId={diagram._id} diagram={diagram} />
         </div>
       )}
     </>
