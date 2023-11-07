@@ -27,7 +27,7 @@ export const getDataTypes = query({
 
     const dataTypes = await ctx.db
       .query("rowTypes")
-      .filter((q) => q.eq(q.field("databaseId"), document.databaseTypeId))
+      .filter((q) => q.eq(q.field("databaseTypeId"), document.databaseTypeId))
       .collect();
 
     return dataTypes;

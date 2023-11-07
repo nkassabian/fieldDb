@@ -4,10 +4,6 @@ import { Doc, Id } from "./_generated/dataModel";
 import { useConvex } from "convex/react";
 import { GenericDatabaseReader } from "convex/server";
 
-interface DiagramWithData extends Doc<"diagrams"> {
-  entities: Doc<"entities">[] | undefined;
-}
-
 export const getDiagrams = query({
   args: {},
   handler: async (ctx) => {
