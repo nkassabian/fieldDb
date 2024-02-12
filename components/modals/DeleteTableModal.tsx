@@ -24,9 +24,11 @@ import { Id } from "@/convex/_generated/dataModel";
 import { usenodeCreation } from "@/hooks/table-creation-hook";
 import { useNodeDeleteion } from "@/hooks/node-deletion-hook";
 import { Trash2 } from "lucide-react";
+import { RFStore } from "@/hooks/NodeStore";
 
 const DeleteTableModal = ({ entityId }: { entityId: Id<"entities"> }) => {
   const { onClose, isOpen, onOpen } = useNodeDeleteion();
+  const { setSelectedNode } = RFStore();
 
   const remove = useMutation(api.entities.remove);
 
@@ -41,6 +43,7 @@ const DeleteTableModal = ({ entityId }: { entityId: Id<"entities"> }) => {
       error: "Failed to delete Table.",
     });
 
+    setSelectedNode(undefined);
     onClose();
   };
 

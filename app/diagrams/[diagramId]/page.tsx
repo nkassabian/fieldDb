@@ -4,14 +4,12 @@ import CreateNodeModal from "@/components/modals/CreateNodeModal";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import ReactFlow, { Background, Controls, MiniMap } from "reactflow";
 
 import "reactflow/dist/style.css";
 import Sidebar from "./_components/Sidebar";
 import { RFStore } from "@/hooks/NodeStore";
 import FlowEditor from "./_components/FlowEditor";
 import { useEffect } from "react";
-import NodeSettings from "./_components/NodeSettings";
 import DeleteTableModal from "@/components/modals/DeleteTableModal";
 
 interface DocumentIdPageProps {
@@ -21,7 +19,7 @@ interface DocumentIdPageProps {
 }
 
 //TODO: Change from any
-const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
+const DiagramIdPage = ({ params }: DocumentIdPageProps) => {
   const { setNodes, setRowTypes } = RFStore();
 
   const diagram: any = useQuery(api.diagrams.getById, {
@@ -61,11 +59,10 @@ const DoagramIdPage = ({ params }: DocumentIdPageProps) => {
           <DeleteTableModal entityId={selectedNode?.id as Id<"entities">} />
           <Sidebar />
           <FlowEditor />
-          <NodeSettings diagramId={diagram._id} diagram={diagram} />
         </div>
       )}
     </>
   );
 };
 
-export default DoagramIdPage;
+export default DiagramIdPage;

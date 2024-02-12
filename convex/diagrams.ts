@@ -3,6 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { useConvex } from "convex/react";
 import { GenericDatabaseReader } from "convex/server";
+import { getOneFrom } from "convex-helpers/server/relationships";
 
 export const getDiagrams = query({
   args: {},
@@ -28,6 +29,7 @@ export const create = mutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
+    databaseTypeId: v.id("databaseTypes"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -43,10 +45,43 @@ export const create = mutation({
       userId,
       isArchived: false,
       isPublished: false,
-      databaseTypeId: "4558fq0z3dfdm98zneg6tyf99k8vp0g" as Id<"databaseTypes">,
+      databaseTypeId: args.databaseTypeId,
     });
 
     return document;
+  },
+});
+
+export const getByIdInfo = query({
+  args: {
+    diagramId: v.optional(v.id("diagrams")),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!args.diagramId) {
+      return; // No diagramId provided
+    }
+
+    const document = await ctx.db.get(args.diagramId);
+
+    if (!document) {
+      throw new Error("Document not found or unauthorized access");
+    }
+
+    if (!identity || document.userId !== identity.subject) {
+      throw new Error("Unauthorized access");
+    }
+
+    let databaseLang = null;
+    if (document.databaseTypeId) {
+      const databaseType = await ctx.db.get(document.databaseTypeId);
+      if (databaseType) {
+        databaseLang = databaseType.title;
+      }
+    }
+
+    return { ...document, lang: { databaseLang } }; // Return the document information
   },
 });
 
@@ -77,25 +112,25 @@ export const getById = query({
       ctx.db,
       "entities",
       "diagramId",
-      document._id
+      document._id,
     );
 
     var rowTypes = await getManyFrom(
       ctx.db,
       "rowTypes",
       "databaseTypeId",
-      document.databaseTypeId
+      document.databaseTypeId,
     );
 
     const transformedRelationships = await Promise.all(
       entities.map(async (entity: Doc<"entities">) => {
         var rows = await getManyFrom(ctx.db, "rows", "entityId", entity._id);
         return { ...entity, rows: rows };
-      })
+      }),
     );
 
     const transformedRelationships2 = rowTypes.map(
-      (rowType: Doc<"rowTypes">) => ({ ...rowType })
+      (rowType: Doc<"rowTypes">) => ({ ...rowType }),
     );
 
     const result = {
