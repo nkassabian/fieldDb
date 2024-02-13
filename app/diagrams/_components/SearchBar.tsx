@@ -18,15 +18,11 @@ const SearchBar = () => {
 
   useEffect(() => {
     if (searchTerm !== "") {
-      if (diagrams) {
-        setDiagrams(diagrams);
-      }
+      setDiagrams(diagrams || []);
     } else {
-      if (allDiagrams) {
-        setDiagrams(allDiagrams);
-      }
+      setDiagrams(allDiagrams || []);
     }
-  }, [diagrams, setDiagrams, searchTerm]);
+  }, [diagrams, allDiagrams, setDiagrams, searchTerm]);
 
   const handleSearchTermChange = (e: {
     target: { value: SetStateAction<string> };
