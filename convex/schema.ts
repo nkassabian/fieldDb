@@ -9,7 +9,12 @@ export default defineSchema({
     isArchived: v.boolean(),
     isPublished: v.boolean(),
     databaseTypeId: v.id("databaseTypes"),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["userId"])
+    .searchIndex("search_diagram_name", {
+      searchField: "title",
+      filterFields: ["userId"],
+    }),
   entities: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
