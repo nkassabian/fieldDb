@@ -17,11 +17,26 @@ const SearchBar = () => {
   const allDiagrams = useQuery(api.diagrams.getDiagrams, {});
 
   useEffect(() => {
-    if (searchTerm !== "") {
-      setDiagrams(diagrams || undefined);
-    } else {
-      setDiagrams(allDiagrams || undefined);
-    }
+    let timer: NodeJS.Timeout;
+
+    const executeSearch = () => {
+      if (searchTerm !== "") {
+        setDiagrams(diagrams || undefined);
+      } else {
+        setDiagrams(allDiagrams || undefined);
+      }
+    };
+
+    const debounceSearch = () => {
+      clearTimeout(timer);
+      timer = setTimeout(executeSearch, 500);
+    };
+
+    debounceSearch();
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [diagrams, allDiagrams, setDiagrams, searchTerm]);
 
   const handleSearchTermChange = (e: {
