@@ -18,9 +18,9 @@ const SearchBar = () => {
 
   useEffect(() => {
     if (searchTerm !== "") {
-      setDiagrams(diagrams || []);
+      setDiagrams(diagrams || undefined);
     } else {
-      setDiagrams(allDiagrams || []);
+      setDiagrams(allDiagrams || undefined);
     }
   }, [diagrams, allDiagrams, setDiagrams, searchTerm]);
 
