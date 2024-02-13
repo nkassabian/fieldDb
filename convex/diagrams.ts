@@ -22,7 +22,9 @@ export const getDiagrams = query({
       dashboard = await ctx.db
         .query("diagrams")
         .withSearchIndex("search_diagram_name", (q) =>
-          q.search("title", args.searchQ).eq("userId", userId),
+          q
+            .search("title", args.searchQ ? args.searchQ : "")
+            .eq("userId", userId),
         )
         .filter((q) => q.eq(q.field("isArchived"), false))
         .collect();
