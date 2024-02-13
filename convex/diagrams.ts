@@ -6,8 +6,10 @@ import { GenericDatabaseReader } from "convex/server";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
 export const getDiagrams = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    searchQ: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -15,11 +17,22 @@ export const getDiagrams = query({
     }
     const userId = identity.subject;
 
-    const dashboard = await ctx.db
-      .query("diagrams")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
-      .filter((q) => q.eq(q.field("isArchived"), false))
-      .collect();
+    let dashboard;
+    if (args.searchQ != null || args.searchQ != undefined) {
+      dashboard = await ctx.db
+        .query("diagrams")
+        .withSearchIndex("search_diagram_name", (q) =>
+          q.search("title", args.searchQ).eq("userId", userId),
+        )
+        .filter((q) => q.eq(q.field("isArchived"), false))
+        .collect();
+    } else {
+      dashboard = await ctx.db
+        .query("diagrams")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .filter((q) => q.eq(q.field("isArchived"), false))
+        .collect();
+    }
 
     return dashboard;
   },

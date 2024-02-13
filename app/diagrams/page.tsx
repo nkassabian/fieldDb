@@ -16,15 +16,25 @@ import CreateDiagramModal from "@/components/modals/CreateDiagramModal";
 import DigramInfoModal from "@/components/modals/DiagramInfoModal";
 import { Metadata } from "next";
 import { Props } from "next/script";
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "lucide-react";
+import SearchBar from "./_components/SearchBar";
+import { DiagramStore } from "@/hooks/DiagramStore";
 
 const Page = () => {
-  const diagrams = useQuery(api.diagrams.getDiagrams);
+  const { diagrams, setDiagrams } = DiagramStore();
 
-  var convex = useConvex();
-
+  const fetchedDiagrams = useQuery(api.diagrams.getDiagrams, {});
+  console.log("FETCHED", fetchedDiagrams);
   useEffect(() => {
     document.title = "Diagrams";
   }, []);
+
+  useEffect(() => {
+    if (fetchedDiagrams) {
+      setDiagrams(fetchedDiagrams);
+    }
+  }, [fetchedDiagrams]);
 
   return (
     <>
@@ -36,6 +46,7 @@ const Page = () => {
         <CreateDiagramModal />
         <DigramInfoModal />
 
+        <SearchBar />
         {diagrams?.length === 0 && (
           <div className="flex flex-col items-center justify-center ">
             <Image
