@@ -17,9 +17,10 @@ import DigramInfoModal from "@/components/modals/DiagramInfoModal";
 import { Metadata } from "next";
 import { Props } from "next/script";
 import { Input } from "@/components/ui/input";
-import { SearchIcon } from "lucide-react";
+import { LayoutDashboardIcon, ListIcon, SearchIcon } from "lucide-react";
 import SearchBar from "./_components/SearchBar";
 import { DiagramStore } from "@/hooks/DiagramStore";
+import ViewSwitcher from "./_components/ViewSwitcher";
 
 const Page = () => {
   const { diagrams, setDiagrams } = DiagramStore();
@@ -46,7 +47,11 @@ const Page = () => {
         <CreateDiagramModal />
         <DigramInfoModal />
 
-        <SearchBar />
+        <div className="flex w-[100%] flex-row items-center justify-between">
+          <SearchBar />
+          <ViewSwitcher />
+        </div>
+
         {diagrams?.length === 0 && (
           <div className="flex flex-col items-center justify-center ">
             <Image
