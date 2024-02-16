@@ -1,6 +1,5 @@
 "use client";
 
-import DigramInfoModal from "@/components/modals/DiagramInfoModal";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Id } from "@/convex/_generated/dataModel";
@@ -9,17 +8,13 @@ import { cn, formatDateToCustomFormat } from "@/lib/utils";
 import { ClockIcon, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import Image from "next/image";
 import {
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useState } from "react";
-import Link from "next/link";
 import { DiagramStore } from "@/hooks/DiagramStore";
 
 interface DiagramProps {
@@ -42,15 +37,11 @@ const Diagram = ({ id, title, description, createdOn }: DiagramProps) => {
     // Add more preset gradient combinations here as needed
   ];
 
-  const [gradientColors, setGradientColors] = useState(getRandomGradient());
+  const [gradientColors] = useState(getRandomGradient());
 
   function getRandomGradient() {
     const randomIndex = Math.floor(Math.random() * presetGradients.length);
     return presetGradients[randomIndex];
-  }
-
-  function handleGenerateRandomGradient() {
-    setGradientColors(getRandomGradient());
   }
 
   return (
