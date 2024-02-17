@@ -2,22 +2,12 @@ import { Button } from "@/components/ui/button";
 import { usenodeCreation } from "@/hooks/table-creation-hook";
 import { DatabaseZap, Grab, Import, LucideTable2 } from "lucide-react";
 
-const Sidebar = ({}: {}) => {
+const Sidebar = ({ title }: { title: string }) => {
+  // Corrected props destructuring
   const { onOpen } = usenodeCreation();
   return (
-    <div className="w-12 flex flex-col align-center  gap-y-2 border-r border-nuetral-200">
-      <Button variant={"ghost"} className="p-3">
-        <Grab className="w-10 h-10 text-muted-foreground" />
-      </Button>
-      <Button onClick={onOpen} variant={"ghost"} className="p-3">
-        <LucideTable2 className="w-10 h-10 text-muted-foreground" />
-      </Button>
-      <Button variant={"ghost"} className="p-3">
-        <DatabaseZap className="w-10 h-10 text-muted-foreground" />
-      </Button>
-      <Button variant={"ghost"} className="p-3">
-        <Import className="w-10 h-10 text-muted-foreground" />
-      </Button>
+    <div className="align-center border-nuetral-200  flex h-screen  w-[350px] flex-col gap-y-2 border-r p-5">
+      <h2 className="text-2xl font-bold">{title}</h2>
     </div>
   );
 };

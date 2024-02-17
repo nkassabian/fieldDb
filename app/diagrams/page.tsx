@@ -6,21 +6,40 @@ import Head from "next/head";
 import { api } from "@/convex/_generated/api";
 import { formatDateToCustomFormat } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
-import { useConvex, useMutation, useQuery } from "convex/react";
+import {
+  ConvexReactClient,
+  useConvex,
+  useMutation,
+  useQuery,
+} from "convex/react";
 import Image from "next/image";
 import { toast } from "sonner";
 import Diagram from "./_components/Diagram";
 import DiagramHeader from "./_components/DiagramHeader";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CreateDiagramModal from "@/components/modals/CreateDiagramModal";
 import DigramInfoModal from "@/components/modals/DiagramInfoModal";
 import { Metadata } from "next";
 import { Props } from "next/script";
 import { Input } from "@/components/ui/input";
-import { LayoutDashboardIcon, ListIcon, SearchIcon } from "lucide-react";
+import {
+  BadgeIcon,
+  LayoutDashboardIcon,
+  ListIcon,
+  SearchIcon,
+} from "lucide-react";
 import SearchBar from "./_components/SearchBar";
 import { DiagramStore } from "@/hooks/DiagramStore";
 import ViewSwitcher from "./_components/ViewSwitcher";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Doc } from "@/convex/_generated/dataModel";
+import { ModalProvider } from "@/providers/modal-providers";
 
 const Page = () => {
   const { diagrams, setDiagrams } = DiagramStore();
@@ -37,6 +56,22 @@ const Page = () => {
     }
   }, [fetchedDiagrams]);
 
+  const client = useConvex();
+
+  const [databaseTypes, setDatabaseTypes] = useState<
+    Doc<"databaseTypes">[] | null
+  >(null);
+
+  useEffect(() => {
+    fetchDataFromDatabase(client)
+      .then((data) => {
+        setDatabaseTypes(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, [client]);
+
   return (
     <>
       <Head>
@@ -44,14 +79,27 @@ const Page = () => {
       </Head>
       <div className=" px-[10em]">
         <DiagramHeader />
-        <CreateDiagramModal />
-        <DigramInfoModal />
+        <ModalProvider />
 
         <div className="flex w-[100%] flex-row items-center justify-between">
           <SearchBar />
-          <ViewSwitcher />
+          <div className="flex flex-row gap-2">
+            <Select onValueChange={(val) => console.log(val)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent>
+                {databaseTypes &&
+                  databaseTypes.map((type) => (
+                    <SelectItem key={type._id} value={type._id}>
+                      {type.title}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            <ViewSwitcher />
+          </div>
         </div>
-
         {diagrams?.length === 0 && (
           <div className="flex flex-col items-center justify-center ">
             <Image
@@ -84,6 +132,7 @@ const Page = () => {
               <Diagram.Skeleton />
               <Diagram.Skeleton />
               <Diagram.Skeleton />
+              <Diagram.Skeleton />
             </div>
           </>
         )}
@@ -108,3 +157,7 @@ const Page = () => {
 };
 
 export default Page;
+
+async function fetchDataFromDatabase(client: ConvexReactClient) {
+  return await client.query(api.databaseTypes.getDatabaseTypes);
+}

@@ -17,6 +17,7 @@ import type {
 import type * as databaseTypes from "../databaseTypes.js";
 import type * as diagrams from "../diagrams.js";
 import type * as entities from "../entities.js";
+import type * as helpers_UserQuery from "../helpers/UserQuery.js";
 import type * as rowTypes from "../rowTypes.js";
 import type * as rows from "../rows.js";
 
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   databaseTypes: typeof databaseTypes;
   diagrams: typeof diagrams;
   entities: typeof entities;
+  "helpers/UserQuery": typeof helpers_UserQuery;
   rowTypes: typeof rowTypes;
   rows: typeof rows;
 }>;

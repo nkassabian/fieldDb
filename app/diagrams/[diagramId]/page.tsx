@@ -54,10 +54,10 @@ const DiagramIdPage = ({ params }: DocumentIdPageProps) => {
   return (
     <>
       {diagram && (
-        <div className="flex flex-row border-t border-nuetral-200 h-[calc(100% - 88px)] ">
+        <div className="border-nuetral-200 h-[calc(100% - 88px)] flex flex-row border-t ">
           <CreateNodeModal diagramId={diagram._id} />
           <DeleteTableModal entityId={selectedNode?.id as Id<"entities">} />
-          <Sidebar />
+          <Sidebar title={diagram.title} />
           <FlowEditor />
         </div>
       )}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/Spinner";
 import Link from "next/link";
 import { ModeToggle } from "@/components/ModeToggle";
+import { Logo } from "@/components/Logo";
 
 export const Navbar = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -15,11 +16,13 @@ export const Navbar = () => {
   return (
     <div
       className={cn(
-        "z-50 bg-background dark:bg-[#1f1f1f] fixed top-0 flex items-center w-full px-6 py-3"
+        "bg-background fixed top-0 z-50 flex w-full items-center px-6 py-3 dark:bg-[#1f1f1f]",
         // scrolleed && "border-b shadow-sm"
       )}
     >
-      <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
+      <Logo />
+
+      <div className="flex w-full items-center justify-between gap-x-2 md:ml-auto md:justify-end">
         {isLoading && <Spinner />}
         {!isAuthenticated && !isLoading && (
           <>

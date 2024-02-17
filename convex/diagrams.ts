@@ -4,35 +4,44 @@ import { Doc, Id } from "./_generated/dataModel";
 import { useConvex } from "convex/react";
 import { GenericDatabaseReader } from "convex/server";
 import { getOneFrom } from "convex-helpers/server/relationships";
+import { userMutation, userQuery } from "./helpers/UserQuery";
 
-export const getDiagrams = query({
+export const getDiagrams = userQuery({
   args: {
     searchQ: v.optional(v.string()),
+    languageId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-    const userId = identity.subject;
+    const { db, identity } = ctx;
 
     let dashboard;
     if (args.searchQ != null || args.searchQ != undefined) {
-      dashboard = await ctx.db
+      dashboard = await db
         .query("diagrams")
         .withSearchIndex("search_diagram_name", (q) =>
           q
             .search("title", args.searchQ ? args.searchQ : "")
-            .eq("userId", userId),
+            .eq("userId", identity.subject),
         )
         .filter((q) => q.eq(q.field("isArchived"), false))
+        .filter(
+          (q) =>
+            args.languageId === null ||
+            args.languageId === undefined ||
+            q.eq(q.field("databaseTypeId"), args.languageId),
+        )
         .collect();
     } else {
-      dashboard = await ctx.db
+      dashboard = await db
         .query("diagrams")
-        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .withIndex("by_user", (q) => q.eq("userId", identity.subject))
         .filter((q) => q.eq(q.field("isArchived"), false))
+        .filter(
+          (q: any) =>
+            args.languageId === null ||
+            args.languageId === undefined ||
+            q.eq(q.field("databaseTypeId"), args.languageId),
+        )
         .collect();
     }
 
@@ -40,21 +49,18 @@ export const getDiagrams = query({
   },
 });
 
-export const create = mutation({
+export const create = userMutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
     databaseTypeId: v.id("databaseTypes"),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
+    const { db, subject } = ctx;
 
-    const userId = identity.subject;
+    const userId = subject;
 
-    const document = await ctx.db.insert("diagrams", {
+    const document = await db.insert("diagrams", {
       title: args.title,
       description: args.description,
       userId,
@@ -67,30 +73,29 @@ export const create = mutation({
   },
 });
 
-export const getByIdInfo = query({
+export const getByIdInfo = userQuery({
   args: {
     diagramId: v.optional(v.id("diagrams")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
+    const { db, identity } = ctx;
     if (!args.diagramId) {
       return; // No diagramId provided
     }
 
-    const document = await ctx.db.get(args.diagramId);
+    const document = await db.get(args.diagramId);
 
     if (!document) {
       throw new Error("Document not found or unauthorized access");
     }
 
-    if (!identity || document.userId !== identity.subject) {
+    if (document.userId !== identity.subject) {
       throw new Error("Unauthorized access");
     }
 
     let databaseLang = null;
     if (document.databaseTypeId) {
-      const databaseType = await ctx.db.get(document.databaseTypeId);
+      const databaseType = await db.get(document.databaseTypeId);
       if (databaseType) {
         databaseLang = databaseType.title;
       }
@@ -100,6 +105,7 @@ export const getByIdInfo = query({
   },
 });
 
+//TODO: Change query to custom user query
 export const getById = query({
   args: {
     diagramId: v.id("diagrams"),
