@@ -10,6 +10,7 @@ const spinnerVariants = cva("text-muted-foreground animate-spin", {
       default: "h-4 w-4",
       sm: "h-2 w-2",
       lg: "h-6 w-6",
+      xl: "h-8 w-8",
     },
   },
   defaultVariants: {
@@ -20,5 +21,5 @@ const spinnerVariants = cva("text-muted-foreground animate-spin", {
 interface SpinnerProps extends VariantProps<typeof spinnerVariants> {}
 
 export const Spinner = ({ size }: SpinnerProps) => {
-  return <Loader2 className={cn(spinnerVariants({ size }))} />;
+  return <Loader className={cn(spinnerVariants({ size }))} />;
 };

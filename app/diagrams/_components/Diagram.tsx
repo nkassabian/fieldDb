@@ -14,8 +14,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
 import { DiagramStore } from "@/hooks/DiagramStore";
+import { useState } from "react";
+import DiagramCard from "./DiagramCard";
+import DiagramList from "./DiagramList";
 
 interface DiagramProps {
   id: Id<"diagrams">;
@@ -28,25 +30,10 @@ const Diagram = ({ id, title, description, createdOn }: DiagramProps) => {
   const router = useRouter();
   const { onOpen, setDiagramId } = useDiagramInfo();
   const { viewType } = DiagramStore();
-  const presetGradients = [
-    ["#FFC3A0", "#FFAFBD"],
-    ["#FFE259", "#FFA751"],
-    ["#6A11CB", "#2575FC"],
-    ["#34e89e", "#0f3443"],
-    ["#48c6ef", "#6f86d6"],
-    // Add more preset gradient combinations here as needed
-  ];
-
-  const [gradientColors] = useState(getRandomGradient());
-
-  function getRandomGradient() {
-    const randomIndex = Math.floor(Math.random() * presetGradients.length);
-    return presetGradients[randomIndex];
-  }
 
   return (
     <>
-      <Card
+      {/* <Card
         className={cn(
           "group w-[calc(calc(100%/5)-1rem)] cursor-pointer overflow-hidden rounded-lg border transition sm:w-[calc(calc(100%/2)-1rem)] md:w-[calc(calc(100%/4)-1rem)] dark:border-neutral-700 dark:bg-neutral-800",
           viewType !== "list" ? "block" : "hidden",
@@ -116,7 +103,25 @@ const Diagram = ({ id, title, description, createdOn }: DiagramProps) => {
           " border-muted-foreground m-0 h-[1px] w-full p-0",
           viewType === "list" ? "block" : "hidden",
         )}
-      />
+      /> */}
+      {viewType === "card" && (
+        <DiagramCard
+          title={title}
+          createdOn={createdOn}
+          id={id}
+          description={description}
+          size={"sm"}
+        />
+      )}
+      {viewType === "list" && (
+        <DiagramList
+          title={title}
+          createdOn={createdOn}
+          id={id}
+          description={description}
+          size={"compact"}
+        />
+      )}
     </>
   );
 };

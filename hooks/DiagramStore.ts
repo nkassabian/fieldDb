@@ -14,7 +14,7 @@ export const DiagramStore = create<DiagramStoreState>((set, get) => ({
       diagrams: diagrams,
     });
   },
-  viewType: "card",
+  viewType: "list",
   setViewType: (type: string) => {
     set({
       viewType: type,

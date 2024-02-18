@@ -1,33 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Head from "next/head";
-
 import { api } from "@/convex/_generated/api";
-import { formatDateToCustomFormat } from "@/lib/utils";
-import { useUser } from "@clerk/nextjs";
-import {
-  ConvexReactClient,
-  useConvex,
-  useMutation,
-  useQuery,
-} from "convex/react";
+import { ConvexReactClient, useConvex, useQuery } from "convex/react";
 import Image from "next/image";
-import { toast } from "sonner";
 import Diagram from "./_components/Diagram";
 import DiagramHeader from "./_components/DiagramHeader";
 import { useEffect, useState } from "react";
-import CreateDiagramModal from "@/components/modals/CreateDiagramModal";
-import DigramInfoModal from "@/components/modals/DiagramInfoModal";
-import { Metadata } from "next";
-import { Props } from "next/script";
-import { Input } from "@/components/ui/input";
-import {
-  BadgeIcon,
-  LayoutDashboardIcon,
-  ListIcon,
-  SearchIcon,
-} from "lucide-react";
 import SearchBar from "./_components/SearchBar";
 import { DiagramStore } from "@/hooks/DiagramStore";
 import ViewSwitcher from "./_components/ViewSwitcher";
@@ -85,8 +64,8 @@ const Page = () => {
           <SearchBar />
           <div className="flex flex-row gap-2">
             <Select onValueChange={(val) => console.log(val)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Theme" />
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select Language" />
               </SelectTrigger>
               <SelectContent>
                 {databaseTypes &&
