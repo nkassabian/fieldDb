@@ -101,10 +101,7 @@ const CreateDiagramModal = () => {
           <DialogTitle>Create Diagram</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-2/3 space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
             <FormField
               control={form.control}
               name="title"
@@ -136,14 +133,14 @@ const CreateDiagramModal = () => {
               name="databaseTypeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Database Type</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a verified email to display" />
+                        <SelectValue placeholder="Select a database type." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -155,10 +152,6 @@ const CreateDiagramModal = () => {
                         ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    You can manage email addresses in your{" "}
-                    <Link href="/examples/forms">email settings</Link>.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

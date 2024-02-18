@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import { Doc } from "@/convex/_generated/dataModel";
 import { ModalProvider } from "@/providers/modal-providers";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 const Page = () => {
   const { diagrams, setDiagrams } = DiagramStore();

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClockIcon, MoreVertical } from "lucide-react";
+import { Badge, ClockIcon, MoreVertical } from "lucide-react";
 import { useState } from "react";
 
 const diagramVariants = cva(
